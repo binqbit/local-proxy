@@ -8,14 +8,14 @@ if (port_index === -1) {
     console.error("Please provide port number to run the proxy server");
     process.exit(1);
 }
-const PROXY_TO_PORT = parseInt(process.argv[process.argv.indexOf("--port") + 1]);
+const PROXY_TO_PORT = parseInt(process.argv[port_index + 1]);
 
 const url_index = process.argv.indexOf("--url");
 if (url_index === -1) {
     console.error("Please provide url to proxy");
     process.exit(1);
 }
-const PROXY_FROM_URL = process.argv[process.argv.indexOf("--url") + 1];
+const PROXY_FROM_URL = process.argv[url_index + 1];
 
 
 
