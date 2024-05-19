@@ -1,21 +1,16 @@
 const express = require("express");
 const { createProxyMiddleware } = require("http-proxy-middleware");
+const { getArgByKey } = require("./utils/args");
 
 
 
-const port_index = process.argv.indexOf("--port");
-if (port_index === -1) {
-    console.error("Please provide port number to run the proxy server");
-    process.exit(1);
-}
-const PROXY_TO_PORT = parseInt(process.argv[port_index + 1]);
+const PROXY_TO_PORT = parseInt(getArgByKey("port", true) || 8080);
 
-const url_index = process.argv.indexOf("--url");
-if (url_index === -1) {
+const PROXY_FROM_URL = getArgByKey("url", true);
+if (!PROXY_FROM_URL) {
     console.error("Please provide url to proxy");
     process.exit(1);
 }
-const PROXY_FROM_URL = process.argv[url_index + 1];
 
 
 
