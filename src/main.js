@@ -1,6 +1,6 @@
 const express = require("express");
 const { createProxyMiddleware } = require("http-proxy-middleware");
-const { getArgByKey } = require("./utils/args");
+const { getArgByKey, getArgsValuesByKey } = require("./utils/args");
 
 
 
@@ -12,12 +12,21 @@ if (!PROXY_FROM_URL) {
     process.exit(1);
 }
 
+const ADDITIONAL_PROXY = getArgsValuesByKey("api", 2, true).map(([path, target]) => ({ path: path, target: target }));
+
 
 
 const app = express();
+
+for (const { path, target } of ADDITIONAL_PROXY) {
+    app.use(path, createProxyMiddleware({ target, changeOrigin: true, pathRewrite: { [`^${path}`]: '' } }));
+}
 
 app.all("*", createProxyMiddleware({ target: PROXY_FROM_URL, changeOrigin: true }));
 
 app.listen(PROXY_TO_PORT, "0.0.0.0", async () => {
     console.log(`start proxy from '${PROXY_FROM_URL}' to 'http://localhost:${PROXY_TO_PORT}'`);
+    for (const { path, target } of ADDITIONAL_PROXY) {
+        console.log(`add additional proxy from '${path}' to '${target}'`);
+    }
 });

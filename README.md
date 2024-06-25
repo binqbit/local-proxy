@@ -12,3 +12,8 @@ local-proxy --url 'https://google.com' --port 8080
 ```shell
 local-proxy --url 'http://test.ngrok.io' --port 8000
 ```
+
+### Additonal proxy for the API
+```shell
+local-proxy --url 'http://localhost:8080' --port 8000 --api '/api' 'http://test.ngrok.io'
+```

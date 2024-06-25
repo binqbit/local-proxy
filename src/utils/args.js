@@ -13,6 +13,42 @@ function getArgByKey(key, short = false) {
     }
 }
 
+function getArgsByKey(key, short = false) {
+    const values = [];
+    let argIndex = process.argv.indexOf(`--${key}`);
+    while (argIndex !== -1) {
+        values.push(process.argv[argIndex + 1]);
+        argIndex = process.argv.indexOf(`--${key}`, argIndex + 1);
+    }
+    if (short) {
+        let argIndexShort = process.argv.indexOf(`-${key.substring(0, 1)}`);
+        while (argIndexShort !== -1) {
+            values.push(process.argv[argIndexShort + 1]);
+            argIndexShort = process.argv.indexOf(`-${key.substring(0, 1)}`, argIndexShort + 1);
+        }
+    }
+    return values;
+}
+
+function getArgsValuesByKey(key, count, short = false) {
+    const values = [];
+    let argIndex = process.argv.indexOf(`--${key}`);
+    while (argIndex !== -1) {
+        values.push(process.argv.slice(argIndex + 1, argIndex + 1 + count));
+        argIndex = process.argv.indexOf(`--${key}`, argIndex + 1);
+    }
+    if (short) {
+        let argIndexShort = process.argv.indexOf(`-${key.substring(0, 1)}`);
+        while (argIndexShort !== -1) {
+            values.push(process.argv.slice(argIndexShort + 1, argIndexShort + 1 + count));
+            argIndexShort = process.argv.indexOf(`-${key.substring(0, 1)}`, argIndexShort + 1);
+        }
+    }
+    return values;
+}
+
 module.exports = {
-    getArgByKey
+    getArgByKey,
+    getArgsByKey,
+    getArgsValuesByKey,
 };
