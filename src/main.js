@@ -24,10 +24,12 @@ app.use((req, res, next) => {
 });
 
 for (const { path, target } of ADDITIONAL_PROXY) {
-    app.use(path, createProxyMiddleware({ target, changeOrigin: true, pathRewrite: { [`^${path}`]: '' } }));
+    app.use(path, createProxyMiddleware({ target, changeOrigin: true, pathRewrite: { [`^${path}`]: '', autoRewrite: true }, followRedirects: true }));
 }
 
-app.all("*", createProxyMiddleware({ target: PROXY_FROM_URL, changeOrigin: true }));
+app.all("*", createProxyMiddleware({ target: PROXY_FROM_URL, changeOrigin: true, autoRewrite: true, followRedirects: true }));
+
+
 
 app.listen(PROXY_TO_PORT, "0.0.0.0", async () => {
     console.log(`start proxy from '${PROXY_FROM_URL}' to 'http://localhost:${PROXY_TO_PORT}'`);
