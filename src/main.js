@@ -18,6 +18,11 @@ const ADDITIONAL_PROXY = getArgsValuesByKey("api", 2, true).map(([path, target])
 
 const app = express();
 
+app.use((req, res, next) => {
+    res.setHeader('Cache-Control', 'no-cache');
+    next();
+});
+
 for (const { path, target } of ADDITIONAL_PROXY) {
     app.use(path, createProxyMiddleware({ target, changeOrigin: true, pathRewrite: { [`^${path}`]: '' } }));
 }
