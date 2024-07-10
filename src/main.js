@@ -1,6 +1,6 @@
 const express = require("express");
 const { createProxyMiddleware } = require("http-proxy-middleware");
-const { getArgByKey, getArgsValuesByKey } = require("./utils/args");
+const { getFlagByKey, getArgByKey, getArgsValuesByKey } = require("./utils/args");
 
 
 
@@ -11,6 +11,8 @@ if (!PROXY_FROM_URL) {
     console.error("Please provide url to proxy");
     process.exit(1);
 }
+
+const FOLLOW_REDIRECTS = getFlagByKey("redirect", true);
 
 const ADDITIONAL_PROXY = getArgsValuesByKey("api", 2, true).map(([path, target]) => ({ path: path, target: target }));
 
@@ -24,10 +26,10 @@ app.use((req, res, next) => {
 });
 
 for (const { path, target } of ADDITIONAL_PROXY) {
-    app.use(path, createProxyMiddleware({ target, changeOrigin: true, pathRewrite: { [`^${path}`]: '', autoRewrite: true }, followRedirects: true }));
+    app.use(path, createProxyMiddleware({ target, changeOrigin: true, pathRewrite: { [`^${path}`]: '', autoRewrite: true }, followRedirects: FOLLOW_REDIRECTS }));
 }
 
-app.all("*", createProxyMiddleware({ target: PROXY_FROM_URL, changeOrigin: true, autoRewrite: true, followRedirects: true }));
+app.all("*", createProxyMiddleware({ target: PROXY_FROM_URL, changeOrigin: true, autoRewrite: true, followRedirects: FOLLOW_REDIRECTS }));
 
 
 
@@ -36,4 +38,5 @@ app.listen(PROXY_TO_PORT, "0.0.0.0", async () => {
     for (const { path, target } of ADDITIONAL_PROXY) {
         console.log(`add additional proxy from '${path}' to '${target}'`);
     }
+    console.log(`follow redirects: ${FOLLOW_REDIRECTS}`);
 });

@@ -1,4 +1,8 @@
 
+function getFlagByKey(key, short = false) {
+    return process.argv.indexOf(`--${key}`) !== -1 || (short && process.argv.indexOf(`-${key.substring(0, 1)}`) !== -1);
+}
+
 function getArgByKey(key, short = false) {
     const argIndex = process.argv.indexOf(`--${key}`);
     if (argIndex === -1) {
@@ -48,6 +52,7 @@ function getArgsValuesByKey(key, count, short = false) {
 }
 
 module.exports = {
+    getFlagByKey,
     getArgByKey,
     getArgsByKey,
     getArgsValuesByKey,
