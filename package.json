@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Local Proxy",
   "bin": {
-    "pap": "./src/main.js"
+    "local-proxy": "./src/main.js"
   },
   "scripts": {
     "start": "node ./src/main.js",

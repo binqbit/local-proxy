@@ -13,8 +13,8 @@ if (!PROXY_FROM_URL) {
 }
 
 const FOLLOW_REDIRECTS = getFlagByKey("redirect", true);
-
 const ADDITIONAL_PROXY = getArgsValuesByKey("api", 2, true).map(([path, target]) => ({ path: path, target: target }));
+const DEBUG = getFlagByKey("debug", true);
 
 
 
@@ -26,10 +26,20 @@ app.use((req, res, next) => {
 });
 
 for (const { path, target } of ADDITIONAL_PROXY) {
-    app.use(path, createProxyMiddleware({ target, changeOrigin: true, pathRewrite: { [`^${path}`]: '', autoRewrite: true }, followRedirects: FOLLOW_REDIRECTS }));
+    app.use(path, (req, res, next) => {
+        if (DEBUG) {
+            console.log(`proxy from '${req.url}' to '${target}'`);
+        }
+        createProxyMiddleware({ target, changeOrigin: true, pathRewrite: { [`^${path}`]: '', autoRewrite: true }, followRedirects: FOLLOW_REDIRECTS })(req, res, next);
+    });
 }
 
-app.all("*", createProxyMiddleware({ target: PROXY_FROM_URL, changeOrigin: true, autoRewrite: true, followRedirects: FOLLOW_REDIRECTS }));
+app.all("*", (req, res, next) => {
+    if (DEBUG) {
+        console.log(`request to ${req.url}`);
+    }
+    createProxyMiddleware({ target: PROXY_FROM_URL, changeOrigin: true, autoRewrite: true, followRedirects: FOLLOW_REDIRECTS })(req, res, next);
+});
 
 
 
